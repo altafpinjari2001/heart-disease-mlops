@@ -1,0 +1,15 @@
+artifact_uri: file:///D:/AIML/Sem%203/MLOps/Assignment/heart-disease-mlops/mlruns/732106268012210461/bd96e57b27d14ba5b546bb356fed9e5a/artifacts
+end_time: 1792421251788
+entry_point_name: ''
+experiment_id: '732106268012210461'
+lifecycle_stage: active
+run_id: bd96e57b27d14ba5b546bb356fed9e5a
+run_name: logistic_regression-cfg3
+run_uuid: bd96e57b27d14ba5b546bb356fed9e5a
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1792421251725
+status: 3
+tags: []
+user_id: altaf

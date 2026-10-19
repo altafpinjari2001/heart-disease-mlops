@@ -1,0 +1,15 @@
+artifact_uri: file:///D:/AIML/Sem%203/MLOps/Assignment/heart-disease-mlops/mlruns/732106268012210461/5ae40b35ccd8451580d4035821fed7a0/artifacts
+end_time: 1792421296153
+entry_point_name: ''
+experiment_id: '732106268012210461'
+lifecycle_stage: active
+run_id: 5ae40b35ccd8451580d4035821fed7a0
+run_name: gradient_boosting-cfg10
+run_uuid: 5ae40b35ccd8451580d4035821fed7a0
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1792421296089
+status: 3
+tags: []
+user_id: altaf

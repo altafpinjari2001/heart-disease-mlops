@@ -1,0 +1,44 @@
+{
+  "model_name": "heart-disease-risk",
+  "model_version": "1.0.0",
+  "family": "logistic_regression",
+  "mlflow_run_id": "cf622ea5215d4130b6631892ae6c7f62",
+  "best_params": {
+    "C": 0.3,
+    "class_weight": "balanced",
+    "penalty": "l2"
+  },
+  "trained_at": "2026-10-19T14:48:29+00:00",
+  "features": [
+    "age",
+    "trestbps",
+    "chol",
+    "thalach",
+    "oldpeak",
+    "ca",
+    "sex",
+    "fbs",
+    "exang",
+    "cp",
+    "restecg",
+    "slope",
+    "thal"
+  ],
+  "decision_threshold": 0.5,
+  "n_train": 242,
+  "n_test": 61,
+  "metrics": {
+    "cv_accuracy": 0.8552,
+    "cv_precision": 0.8819,
+    "cv_recall": 0.8008,
+    "cv_f1": 0.8342,
+    "cv_roc_auc": 0.9071,
+    "test_accuracy": 0.8689,
+    "test_precision": 0.8125,
+    "test_recall": 0.9286,
+    "test_f1": 0.8667,
+    "test_roc_auc": 0.961,
+    "test_avg_precision": 0.9489
+  },
+  "quick_mode": false
+}

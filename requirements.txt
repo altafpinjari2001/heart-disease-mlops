@@ -1,0 +1,26 @@
+# Core ML stack
+numpy==1.26.4
+pandas==2.2.2
+scikit-learn==1.5.1
+joblib==1.4.2
+
+# Visualisation (EDA + evaluation plots)
+matplotlib==3.9.2
+seaborn==0.13.2
+
+# Experiment tracking
+mlflow==2.16.2
+
+# Serving + monitoring
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+pydantic==2.9.2
+prometheus-client==0.21.0
+
+# Data download
+requests==2.32.3
+
+# Notebooks
+jupyter==1.1.1
+nbconvert==7.16.4
+ipykernel==6.29.5

@@ -1,0 +1,141 @@
+name: ci-cd
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHON_VERSION: "3.11"
+  IMAGE_NAME: heart-risk-api
+
+jobs:
+  lint:
+    name: Lint (flake8)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+      - run: pip install flake8==7.1.1
+      - name: flake8
+        run: flake8 --format='%(path)s:%(row)d:%(col)d %(code)s %(text)s' --tee --output-file=flake8-report.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: flake8-report
+          path: flake8-report.txt
+
+  test:
+    name: Unit tests (pytest)
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+      - run: pip install -r requirements-dev.txt
+      - name: pytest
+        run: >
+          pytest -v --junitxml=junit.xml
+          --cov=heart_risk --cov=api --cov-report=term-missing
+          --cov-report=xml
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-reports
+          path: |
+            junit.xml
+            coverage.xml
+
+  train:
+    name: Train & track (MLflow)
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: requirements.txt
+      - run: pip install -r requirements.txt
+      - name: Download data
+        run: python scripts/download_data.py --force
+      - name: Train models
+        env:
+          MLFLOW_TRACKING_URI: file:${{ github.workspace }}/ci-mlruns
+        run: python -m heart_risk.train 2>&1 | tee training.log
+      - name: Quality gate (test ROC-AUC >= 0.85)
+        run: |
+          python - <<'EOF'
+          import json, sys
+          m = json.load(open("models/model_metadata.json"))["metrics"]
+          print(json.dumps(m, indent=2))
+          sys.exit(0 if m["test_roc_auc"] >= 0.85 else "ROC-AUC below gate")
+          EOF
+      - uses: actions/upload-artifact@v4
+        with:
+          name: trained-model
+          path: |
+            models/
+            reports/model_comparison.csv
+            reports/figures/
+            training.log
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mlflow-runs
+          path: ci-mlruns/
+
+  docker:
+    name: Build & smoke-test container
+    needs: train
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: trained-model
+          path: .
+      - name: Build image
+        run: docker build -t $IMAGE_NAME:${{ github.sha }} -t $IMAGE_NAME:1.0.0 .
+      - name: Run container
+        run: |
+          docker run -d --name api -p 8000:8000 $IMAGE_NAME:${{ github.sha }}
+          for i in $(seq 1 30); do
+            curl -sf localhost:8000/health && break; sleep 1
+          done
+      - name: Smoke test /predict
+        run: |
+          curl -sf -X POST localhost:8000/predict \
+            -H 'Content-Type: application/json' \
+            -d @sample_request.json | tee predict-response.json
+          python3 -c "import json;r=json.load(open('predict-response.json'));assert r['prediction'] in (0,1) and 0<=r['confidence']<=1"
+      - name: Container logs
+        if: always()
+        run: docker logs api | tee container.log
+      - name: Save image
+        run: docker save $IMAGE_NAME:1.0.0 | gzip > heart-risk-api.tar.gz
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: docker-smoke-test
+          path: |
+            predict-response.json
+            container.log
+      - uses: actions/upload-artifact@v4
+        with:
+          name: docker-image
+          path: heart-risk-api.tar.gz
+          retention-days: 5

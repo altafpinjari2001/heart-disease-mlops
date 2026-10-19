@@ -1,0 +1,15 @@
+artifact_uri: file:///D:/AIML/Sem%203/MLOps/Assignment/heart-disease-mlops/mlruns/732106268012210461/a8c417fb74ba432382cd3ce295aa3358/artifacts
+end_time: 1792421283553
+entry_point_name: ''
+experiment_id: '732106268012210461'
+lifecycle_stage: active
+run_id: a8c417fb74ba432382cd3ce295aa3358
+run_name: random_forest-cfg12
+run_uuid: a8c417fb74ba432382cd3ce295aa3358
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1792421283484
+status: 3
+tags: []
+user_id: altaf
