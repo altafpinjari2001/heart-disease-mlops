@@ -24,7 +24,7 @@ FIG = ROOT / "reports" / "figures"
 SHOT = ROOT / "screenshots"
 OUT = ROOT / "reports" / "MLOps_Assignment1_Report.docx"
 
-REPO_URL = "https://github.com/<your-username>/heart-disease-mlops"
+REPO_URL = "https://github.com/altafpinjari2001/heart-disease-mlops"
 STUDENT = "Altaf Anwar Pinjari  |  2025AE05638"
 
 ACCENT = RGBColor(0x1F, 0x6F, 0x8B)
@@ -229,7 +229,7 @@ para("Requirements: Python 3.11, Git; Docker and Minikube (or Docker "
      "runtime subset used by the container (same pins, so the pickled "
      "pipeline always loads).")
 code("""
-git clone <repo-url> && cd heart-disease-mlops
+git clone https://github.com/altafpinjari2001/heart-disease-mlops.git && cd heart-disease-mlops
 python -m venv .venv && .venv\\Scripts\\activate      # Linux: source .venv/bin/activate
 pip install -r requirements-dev.txt
 python scripts/download_data.py      # download + clean the UCI data
@@ -452,7 +452,10 @@ para("Jobs are chained with needs:, so any lint error, failing test, "
      "training crash, quality-gate miss or broken container stops the "
      "pipeline, and each failing step keeps its full log in the run.")
 image(SHOT / "07_github_actions_pipeline.png", 14,
-      "Figure 13 - GitHub Actions run with all jobs and artefacts.")
+      "Figure 13 - GitHub Actions run #1: all four jobs green, 6 artefacts.")
+image(SHOT / "07b_github_actions_docker_job.png", 15.5,
+      "Figure 13b - CI Docker job log: image build, container start, "
+      "/health and /predict smoke test, structured container logs.")
 
 # ------------------------------------------------ 8 container + API
 doc.add_heading("8. Model containerisation and API", level=1)

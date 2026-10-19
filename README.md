@@ -123,4 +123,4 @@ test split is used only for reporting.
 
 ## Repository
 
-GitHub: `<add your repository URL here>`
+GitHub: <https://github.com/altafpinjari2001/heart-disease-mlops>

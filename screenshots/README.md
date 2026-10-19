@@ -15,6 +15,8 @@
 | `11_api_monitor_dashboard.png` | Built-in `/monitor` dashboard after 300 requests |
 | `12_api_json_logs.png` | Structured JSON request + prediction logs |
 | `13_prometheus_metrics_endpoint.png` | `/metrics` Prometheus exposition |
+| `07_github_actions_pipeline.png` | GitHub Actions run #1 - lint, test, train, docker all green |
+| `07b_github_actions_docker_job.png` | CI docker job log: build, run, /health + /predict smoke test |
 
 ## To capture after running on a machine with Docker / Minikube / GitHub
 
@@ -24,7 +26,6 @@ Save them with these names (the report references them):
 
 | File | Command / page |
 |---|---|
-| `07_github_actions_pipeline.png` | GitHub -> Actions -> `ci-cd` run with the 4 green jobs + artifacts list |
 | `14_docker_build.png` | `docker build -t heart-risk-api:1.0.0 .` finishing successfully |
 | `15_docker_run_predict.png` | `docker run -d -p 8000:8000 ...` + `curl .../predict` + `docker ps` |
 | `16_k8s_resources.png` | `kubectl -n heart-risk get pods,svc,ingress,hpa` |
