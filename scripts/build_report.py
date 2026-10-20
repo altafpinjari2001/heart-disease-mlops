@@ -25,6 +25,8 @@ SHOT = ROOT / "screenshots"
 OUT = ROOT / "reports" / "MLOps_Assignment1_Report.docx"
 
 REPO_URL = "https://github.com/altafpinjari2001/heart-disease-mlops"
+VIDEO_URL = ("https://drive.google.com/file/d/1N9qXK5QjRM7D30F2cs8cYlieP3KHAZhm/"
+             "view?usp=sharing")
 STUDENT = "Altaf Anwar Pinjari  |  2025AE05638"
 
 ACCENT = RGBColor(0x1F, 0x6F, 0x8B)
@@ -50,6 +52,35 @@ for lvl, size in ((1, 15), (2, 12)):
     st.font.size = Pt(size)
     st.font.color.rgb = ACCENT
     st.font.bold = True
+
+
+def add_link(paragraph, url, text, size=None, bold=False):
+    """Append a clickable, underlined hyperlink run to a paragraph."""
+    rid = paragraph.part.relate_to(
+        url, "http://schemas.openxmlformats.org/officeDocument/2006/relationships/"
+             "hyperlink", is_external=True)
+    link = OxmlElement("w:hyperlink")
+    link.set(qn("r:id"), rid)
+    run = OxmlElement("w:r")
+    rpr = OxmlElement("w:rPr")
+    for tag, attrs in (("w:color", {"w:val": "1F6F8B"}), ("w:u", {"w:val": "single"})):
+        el = OxmlElement(tag)
+        for k, v in attrs.items():
+            el.set(qn(k), v)
+        rpr.append(el)
+    if bold:
+        rpr.append(OxmlElement("w:b"))
+    if size:
+        sz = OxmlElement("w:sz")
+        sz.set(qn("w:val"), str(int(size * 2)))
+        rpr.append(sz)
+    run.append(rpr)
+    t = OxmlElement("w:t")
+    t.text = text
+    run.append(t)
+    link.append(run)
+    paragraph._p.append(link)
+    return paragraph
 
 
 def para(text, bold_lead=None, size=None, align=None, italic=False):
@@ -173,8 +204,11 @@ t.runs[0].bold = True
 t.runs[0].font.color.rgb = ACCENT
 para(STUDENT, size=11, align=WD_ALIGN_PARAGRAPH.CENTER)
 rp = para("Code repository: ", size=10, align=WD_ALIGN_PARAGRAPH.CENTER)
-rp.add_run(REPO_URL).font.color.rgb = ACCENT
-rule = rp._p.get_or_add_pPr()
+rp.paragraph_format.space_after = Pt(0)
+add_link(rp, REPO_URL, REPO_URL, size=10)
+vp = para("Demo video: ", size=10, align=WD_ALIGN_PARAGRAPH.CENTER)
+add_link(vp, VIDEO_URL, VIDEO_URL, size=10)
+rule = vp._p.get_or_add_pPr()
 bdr = OxmlElement("w:pBdr")
 bottom = OxmlElement("w:bottom")
 for k, v in (("w:val", "single"), ("w:sz", "8"), ("w:space", "4"),
@@ -547,7 +581,8 @@ para("The project delivers a reproducible path from raw UCI data to a "
      "metrics. Next steps: a model registry with staged promotion, pushing "
      "the image to a container registry from CI, decision-threshold tuning "
      "with clinicians, and statistical input-drift tests on logged requests.")
-para("Code repository: ", bold_lead=None).add_run(REPO_URL).bold = True
+add_link(para("Code repository: "), REPO_URL, REPO_URL, bold=True)
+add_link(para("Demo video (pipeline walkthrough): "), VIDEO_URL, VIDEO_URL, bold=True)
 
 doc.save(OUT)
 print(OUT)

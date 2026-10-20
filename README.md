@@ -137,3 +137,5 @@ test split is used only for reporting.
 ## Repository
 
 GitHub: <https://github.com/altafpinjari2001/heart-disease-mlops>
+
+Demo video (pipeline walkthrough): <https://drive.google.com/file/d/1N9qXK5QjRM7D30F2cs8cYlieP3KHAZhm/view?usp=sharing>
