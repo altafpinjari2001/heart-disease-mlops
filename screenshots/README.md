@@ -10,7 +10,7 @@ Docker Desktop 29.9 + Kubernetes v1.36.1, and GitHub Actions).
 | `04_mlflow_lr_run_details.png` | Champion run: parameters, CV + test metrics, tags, logged model |
 | `05_mlflow_artifacts_roc.png` | Logged artifacts (plots/, cv/, model/) - ROC curve |
 | `06_local_tests_lint_coverage.png` | flake8 (0 issues) + 28 pytest tests passing with coverage |
-| `07_github_actions_pipeline.png` | GitHub Actions run #1 - lint, test, train, docker jobs all green |
+| `07_github_actions_pipeline.png` | GitHub Actions run #6 - lint, test, train, docker jobs all green, artifacts |
 | `07b_github_actions_docker_job.png` | CI docker job log: build, run, /health + /predict smoke test |
 | `08_api_swagger_docs.png` | FastAPI Swagger UI |
 | `09_api_predict_curl.png` | curl: `/health`, `/predict` (both classes), 422 on invalid input, `/model-info` |

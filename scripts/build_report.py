@@ -445,7 +445,7 @@ para("Jobs are chained with needs:, so any lint error, failing test, "
      "training crash, quality-gate miss or broken container stops the "
      "pipeline, and each failing step keeps its full log in the run.")
 image(SHOT / "07_github_actions_pipeline.png", 10,
-      "Figure 11 - GitHub Actions run #1: all four jobs green, 6 artefacts.")
+      "Figure 11 - GitHub Actions run #6: lint, tests, training and Docker jobs all green, 6 artefacts, no warnings.")
 image(SHOT / "07b_github_actions_docker_job.png", 14,
       "Figure 12 - CI Docker job log: image build, container start, "
       "/health and /predict smoke test, structured container logs.")
