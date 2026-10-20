@@ -7,7 +7,7 @@
   ],
   "timezone": "browser",
   "schemaVersion": 39,
-  "version": 1,
+  "version": 2,
   "refresh": "10s",
   "time": {
     "from": "now-30m",
@@ -71,7 +71,20 @@
         }
       ],
       "fieldConfig": {
-        "defaults": {},
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        },
         "overrides": []
       },
       "options": {}
@@ -103,7 +116,22 @@
       ],
       "fieldConfig": {
         "defaults": {
-          "unit": "percentunit"
+          "unit": "percentunit",
+          "min": 0,
+          "max": 1,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 0.8
+              }
+            ]
+          }
         },
         "overrides": []
       },
@@ -126,7 +154,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "sum(rate(heart_api_requests_total{status=~\"5..\"}[5m])) / clamp_min(sum(rate(heart_api_requests_total[5m])),1e-9)",
+          "expr": "(sum(rate(heart_api_requests_total{status=~\"5..\"}[5m])) or vector(0)) / clamp_min(sum(rate(heart_api_requests_total[5m])),1e-9)",
           "legendFormat": "errors",
           "datasource": {
             "type": "prometheus",
@@ -136,7 +164,20 @@
       ],
       "fieldConfig": {
         "defaults": {
-          "unit": "percentunit"
+          "unit": "percentunit",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 0.05
+              }
+            ]
+          }
         },
         "overrides": []
       },
@@ -169,7 +210,24 @@
       ],
       "fieldConfig": {
         "defaults": {
-          "unit": "s"
+          "unit": "s",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 0.25
+              },
+              {
+                "color": "red",
+                "value": 0.5
+              }
+            ]
+          }
         },
         "overrides": []
       },
@@ -293,7 +351,7 @@
     {
       "id": 9,
       "type": "bargauge",
-      "title": "Predicted risk distribution (cumulative buckets)",
+      "title": "Predicted risk distribution (count per bucket)",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -317,7 +375,20 @@
         }
       ],
       "fieldConfig": {
-        "defaults": {},
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        },
         "overrides": []
       },
       "options": {}

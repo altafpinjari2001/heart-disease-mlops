@@ -1,5 +1,6 @@
-# LoadBalancer service. On Minikube run `minikube tunnel` to get an
-# external IP; on Docker Desktop it is published on localhost:80.
+# LoadBalancer service on port 8080 (port 80 is left to the NGINX ingress
+# controller). Docker Desktop publishes it on http://localhost:8080; on
+# Minikube run `minikube tunnel` and use the EXTERNAL-IP.
 apiVersion: v1
 kind: Service
 metadata:
@@ -13,5 +14,5 @@ spec:
     app: heart-risk-api
   ports:
     - name: http
-      port: 80
+      port: 8080
       targetPort: http

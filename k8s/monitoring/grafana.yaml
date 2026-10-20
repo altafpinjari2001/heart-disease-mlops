@@ -26,6 +26,11 @@ spec:
               value: admin
             - name: GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH
               value: /var/lib/grafana/dashboards/heart-risk-api.json
+            # read-only anonymous viewing for the local demo cluster
+            - name: GF_AUTH_ANONYMOUS_ENABLED
+              value: "true"
+            - name: GF_AUTH_ANONYMOUS_ORG_ROLE
+              value: Viewer
           ports:
             - containerPort: 3000
           volumeMounts:

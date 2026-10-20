@@ -78,23 +78,34 @@ python scripts/load_test.py -n 300       # generate traffic
 # API :8000   Prometheus :9090   Grafana :3000 (admin/admin, dashboard "Heart Risk API - Monitoring")
 ```
 
-## 4. Deploy to Kubernetes (Minikube)
+## 4. Deploy to Kubernetes (Docker Desktop or Minikube)
+
+Tested on Docker Desktop 29.9 with its built-in Kubernetes (v1.36.1):
 
 ```bash
-minikube start
 bash scripts/deploy_k8s.sh               # Windows: powershell -ExecutionPolicy Bypass -File scripts\deploy_k8s.ps1
-minikube tunnel                          # separate terminal, gives the LoadBalancer an external IP
-kubectl -n heart-risk get pods,svc,ingress
-curl -X POST http://<EXTERNAL-IP>/predict -H "Content-Type: application/json" -d @sample_request.json
+kubectl -n heart-risk get pods,svc,ingress,hpa
 ```
 
-Ingress: add `<minikube ip> heart-risk.local` to your hosts file and call
-`http://heart-risk.local/predict`. Grafana: `minikube service -n heart-risk grafana --url`.
+The script builds the image, installs the NGINX ingress controller and
+metrics-server, applies the API Deployment (2 replicas, probes, limits),
+LoadBalancer Service, Ingress, HPA (2-5 replicas) and Prometheus + Grafana.
 
-**Access instructions (no public URL):** the API is deployed to a local cluster;
-after `minikube tunnel` it is reachable at `http://<EXTERNAL-IP>/` (Service) or
-`http://heart-risk.local/` (Ingress). Docker Desktop's Kubernetes publishes the
-LoadBalancer on `http://localhost/`.
+**Access instructions (local cluster, no public URL):**
+
+| What | How |
+|---|---|
+| API via LoadBalancer | `curl -X POST http://localhost:8080/predict -H "Content-Type: application/json" -d @sample_request.json` |
+| API via Ingress | `kubectl -n ingress-nginx port-forward svc/ingress-nginx-controller 8088:80` then `curl -H "Host: heart-risk.local" http://localhost:8088/health` |
+| Prometheus | `kubectl -n heart-risk port-forward svc/prometheus 9090:9090` → <http://localhost:9090/targets> |
+| Grafana | `kubectl -n heart-risk port-forward svc/grafana 3000:3000` → <http://localhost:3000> (admin / admin, anonymous read-only enabled) |
+| Generate traffic | `python scripts/load_test.py --url http://127.0.0.1:8080 -n 500` |
+
+Docker Desktop's load balancer serves a single LoadBalancer service, so the API
+gets it (port 8080) and the ingress controller runs as NodePort and is reached
+with a port-forward. On **Minikube** (`minikube start`, then the same script)
+run `minikube tunnel` and use the EXTERNAL-IP of `svc/heart-risk-api`, or add
+`<minikube ip> heart-risk.local` to your hosts file for the Ingress.
 
 ## 5. CI/CD
 

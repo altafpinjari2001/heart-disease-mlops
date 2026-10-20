@@ -223,8 +223,8 @@ para("Design principle: every stage is a plain Python entry point "
 
 # ------------------------------------------------------------- 2 setup
 doc.add_heading("2. Setup and installation", level=1)
-para("Requirements: Python 3.11, Git; Docker and Minikube (or Docker "
-     "Desktop Kubernetes) for the deployment steps. All library versions are "
+para("Requirements: Python 3.11, Git; Docker Desktop with Kubernetes (or "
+     "Minikube) for the deployment steps. All library versions are "
      "pinned in requirements.txt; requirements-api.txt is the minimal "
      "runtime subset used by the container (same pins, so the pickled "
      "pipeline always loads).")
@@ -255,8 +255,6 @@ table(["Folder / file", "Purpose"], [
     ["monitoring/", "Prometheus config, alert rules, Grafana dashboard"],
     ["screenshots/, reports/", "Evidence and this report"],
 ], widths=[5.2, 11.4])
-image(SHOT / "01_data_download.png", 15,
-      "Figure 2 - Data acquisition script downloading and cleaning the data.")
 
 # --------------------------------------------------------------- 3 EDA
 doc.add_heading("3. Data acquisition, cleaning and EDA", level=1)
@@ -279,12 +277,12 @@ bullets([
 doc.add_heading("3.2 Findings", level=2)
 image_pair(FIG / "eda" / "01_class_balance.png",
            FIG / "eda" / "02_missing_values.png", 7.2,
-           "Figure 3 - Class balance (164 healthy vs 139 diseased, 54 / 46 %) "
+           "Figure 2 - Class balance (164 healthy vs 139 diseased, 54 / 46 %) "
            "and missing values in the raw file.")
 para("The classes are only mildly imbalanced, so stratified splits are "
      "sufficient; class_weight='balanced' is still explored during tuning.")
 image(FIG / "eda" / "03_histograms.png", 13.5,
-      "Figure 4 - Continuous features by diagnosis.")
+      "Figure 3 - Continuous features by diagnosis.")
 bullets([
     "Diseased patients reach a markedly lower maximum heart rate (thalach) "
     "and show higher exercise-induced ST depression (oldpeak).",
@@ -295,16 +293,16 @@ bullets([
 ])
 image_pair(FIG / "eda" / "04_correlation_heatmap.png",
            FIG / "eda" / "07_hr_vs_age.png", 8.2,
-           "Figure 5 - Spearman correlation heatmap (left) and max heart rate "
+           "Figure 4 - Spearman correlation heatmap (left) and max heart rate "
            "vs age (right): most diseased patients fall below 85 % of the "
            "age-predicted maximum.")
 image(FIG / "eda" / "05_categorical_disease_rate.png", 14.5,
-      "Figure 6 - Disease rate per category (dashed line = overall rate).")
+      "Figure 5 - Disease rate per category (dashed line = overall rate).")
 para("Chest pain type 4 (asymptomatic), reversible thalassemia defect, flat "
      "ST slope and exercise-induced angina all have disease rates above "
      "65 %. Because these are nominal codes (cp = 4 is not 'four times' "
      "cp = 1), cp, restecg, slope and thal are one-hot encoded.")
-para("Figure 5 (right) motivates the engineered feature hr_reserve_ratio = "
+para("Figure 4 (right) motivates the engineered feature hr_reserve_ratio = "
      "thalach / (220 - age): the fraction of the age-predicted maximum heart "
      "rate reached during the stress test. It separates the age effect from "
      "the cardiac response. Box plots (reports/figures/eda/06_boxplots.png) "
@@ -352,7 +350,7 @@ table(["Model", "CV AUC", "CV acc", "CV recall", "Test AUC", "Test acc",
        "Test prec", "Test recall"], rows,
       widths=[3.6, 1.7, 1.7, 1.8, 1.8, 1.8, 1.9, 1.9], font=8.5)
 image(FIG / "model_comparison.png", 11,
-      "Figure 7 - Cross-validated metrics of the tuned model families.")
+      "Figure 6 - Cross-validated metrics of the tuned model families.")
 para("Logistic regression wins on CV ROC-AUC (0.907) and accuracy. The tree "
      "ensembles score slightly higher on the 61-patient test split, but that "
      "difference (+/- 1-2 patients) is within noise and choosing on it would "
@@ -362,7 +360,7 @@ para("Logistic regression wins on CV ROC-AUC (0.907) and accuracy. The tree "
      "coefficients can be explained to clinicians.")
 image_pair(FIG / "logistic_regression" / "confusion_matrix.png",
            FIG / "logistic_regression" / "feature_importance.png", 6.8,
-           "Figure 8 - Champion confusion matrix on the test split (left) and "
+           "Figure 7 - Champion confusion matrix on the test split (left) and "
            "coefficients on standardised features (right).")
 para("Recall of 0.93 on the test split (26 of 28 diseased patients found) is "
      "the clinically important number: a screening model should prefer false "
@@ -385,10 +383,10 @@ bullets([
 ])
 image_pair(SHOT / "03_mlflow_experiment_runs.png",
            SHOT / "04_mlflow_lr_run_details.png", 8.2,
-           "Figure 9 - MLflow experiment 'heart-disease-risk' (left) and the "
+           "Figure 8 - MLflow experiment 'heart-disease-risk' (left) and the "
            "champion run with parameters and metrics (right).")
 image(FIG / "experiment_tracking_summary.png", 14.5,
-      "Figure 10 - All 64 tuning runs read back from MLflow "
+      "Figure 9 - All 64 tuning runs read back from MLflow "
       "(scripts/experiment_summary.py).")
 para("The tracking data also explains the tuning behaviour: strong L1 "
      "regularisation (C <= 0.03) removes every coefficient (AUC 0.5), and "
@@ -396,7 +394,7 @@ para("The tracking data also explains the tuning behaviour: strong L1 "
      "configurations are tightly clustered (0.87-0.90), while gradient "
      "boosting with deeper trees overfits.")
 image(SHOT / "05_mlflow_artifacts_roc.png", 10,
-      "Figure 11 - Logged artefacts of a run (plots, cv results, model).")
+      "Figure 10 - Logged artefacts of a run (plots, cv results, model).")
 
 # ------------------------------------------------- 6 packaging
 doc.add_heading("6. Model packaging and reproducibility", level=1)
@@ -434,7 +432,7 @@ table(["Test module", "What is verified"], [
                          "batch, /metrics, /monitor, /model-info"],
 ], widths=[3.8, 12.8])
 image(SHOT / "06_local_tests_lint_coverage.png", 10.5,
-      "Figure 12 -flake8 (0 issues) and 28 passing tests with coverage.")
+      "Figure 11 -flake8 (0 issues) and 28 passing tests with coverage.")
 para("GitHub Actions workflow (.github/workflows/ci.yml), triggered on push, "
      "pull request and manually:")
 table(["Job", "Steps", "Artefacts"], [
@@ -451,10 +449,10 @@ table(["Job", "Steps", "Artefacts"], [
 para("Jobs are chained with needs:, so any lint error, failing test, "
      "training crash, quality-gate miss or broken container stops the "
      "pipeline, and each failing step keeps its full log in the run.")
-image(SHOT / "07_github_actions_pipeline.png", 14,
-      "Figure 13 - GitHub Actions run #1: all four jobs green, 6 artefacts.")
-image(SHOT / "07b_github_actions_docker_job.png", 15.5,
-      "Figure 13b - CI Docker job log: image build, container start, "
+image(SHOT / "07_github_actions_pipeline.png", 11.5,
+      "Figure 12 - GitHub Actions run #1: all four jobs green, 6 artefacts.")
+image(SHOT / "07b_github_actions_docker_job.png", 14,
+      "Figure 13 - CI Docker job log: image build, container start, "
       "/health and /predict smoke test, structured container logs.")
 
 # ------------------------------------------------ 8 container + API
@@ -469,19 +467,14 @@ bullets([
     ("Other endpoints: ", "/predict/batch (up to 500 patients), /health, "
      "/model-info, /metrics (Prometheus), /monitor (live dashboard), /docs."),
 ])
-code("""
-docker build -t heart-risk-api:1.0.0 .
-docker run -d --name heart-api -p 8000:8000 heart-risk-api:1.0.0
-curl -X POST http://localhost:8000/predict -H "Content-Type: application/json" -d @sample_request.json
-{"prediction":1,"label":"heart_disease","confidence":0.9767,"risk_probability":0.9767,
- "model_version":"1.0.0","request_id":"adccdac868c6"}
-""")
-image(SHOT / "09_api_predict_curl.png", 15,
-      "Figure 14 - Health check, predictions for a high- and a low-risk "
-      "patient, validation error (422) and model info.")
-image_pair(SHOT / "14_docker_build.png", SHOT / "15_docker_run_predict.png",
-           8.2, "Figure 15 - Docker image build (left) and the container "
-                "answering /predict (right).")
+para("The image was built and run locally with Docker Desktop 29.9 "
+     "(final image 258 MB) and is also built and smoke-tested in every CI "
+     "run (Figure 13).")
+image(SHOT / "14_docker_build.png", 10.5,
+      "Figure 14 - Local multi-stage docker build of heart-risk-api:1.0.0.")
+image(SHOT / "15_docker_run_predict.png", 15,
+      "Figure 15 - Container running (docker ps), /health and /predict "
+      "answered from the container, JSON logs via docker logs.")
 
 # ------------------------------------------------ 9 deployment
 doc.add_heading("9. Production deployment (Kubernetes)", level=1)
@@ -491,28 +484,37 @@ table(["Manifest", "Key settings"], [
                            "readiness + liveness probes on /health, CPU / "
                            "memory requests and limits, non-root, Prometheus "
                            "scrape annotations"],
-    ["02-service.yaml", "type LoadBalancer, port 80 -> 8000"],
-    ["03-ingress.yaml", "nginx Ingress, host heart-risk.local"],
-    ["04-hpa.yaml", "autoscale 2-5 replicas at 70 % CPU"],
+    ["02-service.yaml", "type LoadBalancer, port 8080 -> 8000"],
+    ["03-ingress.yaml", "NGINX Ingress, host heart-risk.local"],
+    ["04-hpa.yaml", "autoscale 2-5 replicas at 70 % CPU (metrics-server)"],
     ["monitoring/*.yaml", "Prometheus (RBAC + pod discovery) and Grafana "
                           "with provisioned datasource and dashboard"],
 ], widths=[4.2, 12.4])
+para("The stack was deployed to Docker Desktop's built-in Kubernetes "
+     "(single node, v1.36.1) with one script that builds the image, installs "
+     "the NGINX ingress controller and metrics-server, and applies every "
+     "manifest plus the monitoring stack:")
 code("""
-minikube start
-bash scripts/deploy_k8s.sh        # build, load image, apply manifests + monitoring
-minikube tunnel                   # separate terminal
-kubectl -n heart-risk get pods,svc,ingress,hpa
-curl -X POST http://<EXTERNAL-IP>/predict -H "Content-Type: application/json" -d @sample_request.json
+bash scripts/deploy_k8s.sh        # Windows: scripts\\deploy_k8s.ps1 (also supports Minikube)
+kubectl -n heart-risk get deploy,pods,svc,ingress,hpa
+curl -X POST http://localhost:8080/predict -H "Content-Type: application/json" -d @sample_request.json
+kubectl -n ingress-nginx port-forward svc/ingress-nginx-controller 8088:80
+curl -H "Host: heart-risk.local" http://localhost:8088/predict ...
 """)
-para("Access instructions: the API is deployed on a local Minikube cluster. "
-     "With minikube tunnel running it is reachable at http://<EXTERNAL-IP>/ "
-     "(LoadBalancer) or http://heart-risk.local/ after adding the Minikube "
-     "IP to the hosts file (Ingress). Docker Desktop Kubernetes publishes the "
-     "LoadBalancer on http://localhost/.")
-image_pair(SHOT / "16_k8s_resources.png",
-           SHOT / "17_k8s_predict_loadbalancer.png", 8.2,
-           "Figure 16 - Pods, Service, Ingress and HPA in namespace heart-risk "
-           "(left) and a prediction served through the LoadBalancer (right).")
+para("Access instructions (local cluster, no public URL): the LoadBalancer "
+     "publishes the API on http://localhost:8080. Docker Desktop's load "
+     "balancer serves a single LoadBalancer service, so the ingress "
+     "controller runs as NodePort and is reached through a port-forward on "
+     "localhost:8088 with the Host header heart-risk.local; a request without "
+     "the host returns 404, proving host-based routing. On Minikube the same "
+     "script works with minikube tunnel. Under the load test the HPA scaled "
+     "the API from 2 to 4 replicas, and Prometheus discovered every new pod.")
+image(SHOT / "16_k8s_resources.png", 14,
+      "Figure 16 - Node, Deployments, Pods, Services, Ingress and HPA "
+      "(scaled 2 -> 4 under load) in namespace heart-risk.")
+image(SHOT / "17_k8s_predict_loadbalancer.png", 15,
+      "Figure 17 - Predictions served through the LoadBalancer and the "
+      "NGINX Ingress, plus pod logs.")
 
 # ------------------------------------------------ 10 monitoring
 doc.add_heading("10. Monitoring and logging", level=1)
@@ -531,17 +533,15 @@ bullets([
     ("Dashboards: ", "Grafana dashboard (status, totals, positive share, "
      "error rate, latency percentiles, request rate, predictions per label, "
      "risk distribution) and a dependency-free /monitor page built into the "
-     "API."),
+     "API (screenshot in screenshots/11_api_monitor_dashboard.png)."),
 ])
-image(SHOT / "11_api_monitor_dashboard.png", 13.5,
-      "Figure 17 - Built-in /monitor dashboard after 300 requests from "
-      "scripts/load_test.py (5 % deliberately invalid).")
-image(SHOT / "12_api_json_logs.png", 14,
-      "Figure 18 - Structured JSON request and prediction logs.")
-image_pair(SHOT / "18_grafana_dashboard.png",
-           SHOT / "19_prometheus_targets.png", 8.2,
-           "Figure 19 - Grafana dashboard fed by Prometheus (left) and "
-           "Prometheus scraping every API pod (right).")
+image(SHOT / "18_grafana_dashboard.png", 15,
+      "Figure 18 - Grafana dashboard in the cluster after ~3,200 predictions "
+      "through the LoadBalancer: 0 % 5xx, p95 latency ~50 ms, positive share "
+      "46 % (matches training prevalence). The early latency spike is the "
+      "load burst before the HPA added replicas.")
+image(SHOT / "19_prometheus_targets.png", 11,
+      "Figure 19 - Prometheus pod discovery: all 4 API replicas UP.")
 
 # ------------------------------------------------ 11 conclusion
 doc.add_heading("11. Conclusion and future work", level=1)

@@ -1,5 +1,6 @@
-# Requires the NGINX ingress controller (`minikube addons enable ingress`).
-# Add "<minikube ip> heart-risk.local" to your hosts file to use it.
+# Requires the NGINX ingress controller (`minikube addons enable ingress`, or
+# the ingress-nginx cloud manifest on Docker Desktop - see deploy scripts).
+# Test: curl -H "Host: heart-risk.local" http://localhost/health
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -17,4 +18,4 @@ spec:
               service:
                 name: heart-risk-api
                 port:
-                  number: 80
+                  number: 8080
