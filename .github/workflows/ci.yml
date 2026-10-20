@@ -28,7 +28,7 @@ jobs:
       - run: pip install flake8==7.1.1
       - name: flake8
         run: flake8 --format='%(path)s:%(row)d:%(col)d %(code)s %(text)s' --tee --output-file=flake8-report.txt
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         if: always()
         with:
           name: flake8-report
@@ -51,7 +51,7 @@ jobs:
           pytest -v --junitxml=junit.xml
           --cov=heart_risk --cov=api --cov-report=term-missing
           --cov-report=xml
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         if: always()
         with:
           name: test-reports
@@ -85,7 +85,7 @@ jobs:
           print(json.dumps(m, indent=2))
           sys.exit(0 if m["test_roc_auc"] >= 0.85 else "ROC-AUC below gate")
           EOF
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         with:
           name: trained-model
           path: |
@@ -93,7 +93,7 @@ jobs:
             reports/model_comparison.csv
             reports/figures/
             training.log
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         with:
           name: mlflow-runs
           path: ci-mlruns/
@@ -104,7 +104,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v5
-      - uses: actions/download-artifact@v5
+      - uses: actions/download-artifact@v6
         with:
           name: trained-model
           path: .
@@ -127,14 +127,14 @@ jobs:
         run: docker logs api | tee container.log
       - name: Save image
         run: docker save $IMAGE_NAME:1.0.0 | gzip > heart-risk-api.tar.gz
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         if: always()
         with:
           name: docker-smoke-test
           path: |
             predict-response.json
             container.log
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         with:
           name: docker-image
           path: heart-risk-api.tar.gz
