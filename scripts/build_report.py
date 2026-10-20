@@ -164,27 +164,24 @@ def page_break():
     doc.add_paragraph().add_run().add_break(WD_BREAK.PAGE)
 
 
-# ------------------------------------------------------------------ cover
-for _ in range(5):
-    doc.add_paragraph()
-para("Machine Learning Operations (AIMLCZG523)", size=13,
+# ------------------------------------------------------------------ title
+para("Machine Learning Operations (AIMLCZG523)  |  Assignment 01", size=11,
      align=WD_ALIGN_PARAGRAPH.CENTER)
-p = para("Assignment 01", size=13, align=WD_ALIGN_PARAGRAPH.CENTER)
-doc.add_paragraph()
-t = para("Heart Disease Risk Prediction:\nan End-to-End MLOps Pipeline",
-         size=22, align=WD_ALIGN_PARAGRAPH.CENTER)
+t = para("Heart Disease Risk Prediction: an End-to-End MLOps Pipeline",
+         size=18, align=WD_ALIGN_PARAGRAPH.CENTER)
 t.runs[0].bold = True
 t.runs[0].font.color.rgb = ACCENT
-doc.add_paragraph()
-para("Data acquisition · EDA · model development · MLflow tracking · "
-     "packaging · CI/CD · Docker · Kubernetes · monitoring",
-     size=11, align=WD_ALIGN_PARAGRAPH.CENTER, italic=True)
-for _ in range(6):
-    doc.add_paragraph()
-para(STUDENT, size=12, align=WD_ALIGN_PARAGRAPH.CENTER)
-para("Code repository: ", size=11, align=WD_ALIGN_PARAGRAPH.CENTER) \
-    .add_run(REPO_URL).font.color.rgb = ACCENT
-page_break()
+para(STUDENT, size=11, align=WD_ALIGN_PARAGRAPH.CENTER)
+rp = para("Code repository: ", size=10, align=WD_ALIGN_PARAGRAPH.CENTER)
+rp.add_run(REPO_URL).font.color.rgb = ACCENT
+rule = rp._p.get_or_add_pPr()
+bdr = OxmlElement("w:pBdr")
+bottom = OxmlElement("w:bottom")
+for k, v in (("w:val", "single"), ("w:sz", "8"), ("w:space", "4"),
+             ("w:color", "1F6F8B")):
+    bottom.set(qn(k), v)
+bdr.append(bottom)
+rule.append(bdr)
 
 # ------------------------------------------------------------ 1 overview
 doc.add_heading("1. Problem, objective and summary", level=1)
@@ -211,7 +208,7 @@ table(["Outcome", "Value"], [
 ], widths=[7, 9.6])
 
 doc.add_heading("1.1 Architecture", level=2)
-image(FIG / "architecture.png", 16.4,
+image(FIG / "architecture.png", 14,
       "Figure 1 - System architecture: data & experimentation, CI/CD, "
       "serving on Kubernetes and monitoring.")
 para("Design principle: every stage is a plain Python entry point "
@@ -281,7 +278,7 @@ image_pair(FIG / "eda" / "01_class_balance.png",
            "and missing values in the raw file.")
 para("The classes are only mildly imbalanced, so stratified splits are "
      "sufficient; class_weight='balanced' is still explored during tuning.")
-image(FIG / "eda" / "03_histograms.png", 13.5,
+image(FIG / "eda" / "03_histograms.png", 12,
       "Figure 3 - Continuous features by diagnosis.")
 bullets([
     "Diseased patients reach a markedly lower maximum heart rate (thalach) "
@@ -296,7 +293,7 @@ image_pair(FIG / "eda" / "04_correlation_heatmap.png",
            "Figure 4 - Spearman correlation heatmap (left) and max heart rate "
            "vs age (right): most diseased patients fall below 85 % of the "
            "age-predicted maximum.")
-image(FIG / "eda" / "05_categorical_disease_rate.png", 14.5,
+image(FIG / "eda" / "05_categorical_disease_rate.png", 13,
       "Figure 5 - Disease rate per category (dashed line = overall rate).")
 para("Chest pain type 4 (asymptomatic), reversible thalassemia defect, flat "
      "ST slope and exercise-induced angina all have disease rates above "
@@ -385,7 +382,7 @@ image_pair(SHOT / "03_mlflow_experiment_runs.png",
            SHOT / "04_mlflow_lr_run_details.png", 8.2,
            "Figure 8 - MLflow experiment 'heart-disease-risk' (left) and the "
            "champion run with parameters and metrics (right).")
-image(FIG / "experiment_tracking_summary.png", 14.5,
+image(FIG / "experiment_tracking_summary.png", 13,
       "Figure 9 - All 64 tuning runs read back from MLflow "
       "(scripts/experiment_summary.py).")
 para("The tracking data also explains the tuning behaviour: strong L1 "
@@ -393,8 +390,6 @@ para("The tracking data also explains the tuning behaviour: strong L1 "
      "logistic regression plateaus at ~0.90-0.91 from C = 0.1. Random-forest "
      "configurations are tightly clustered (0.87-0.90), while gradient "
      "boosting with deeper trees overfits.")
-image(SHOT / "05_mlflow_artifacts_roc.png", 10,
-      "Figure 10 - Logged artefacts of a run (plots, cv results, model).")
 
 # ------------------------------------------------- 6 packaging
 doc.add_heading("6. Model packaging and reproducibility", level=1)
@@ -431,8 +426,8 @@ table(["Test module", "What is verified"], [
                          "optional fields, 422 on invalid / unknown fields, "
                          "batch, /metrics, /monitor, /model-info"],
 ], widths=[3.8, 12.8])
-image(SHOT / "06_local_tests_lint_coverage.png", 10.5,
-      "Figure 11 -flake8 (0 issues) and 28 passing tests with coverage.")
+image(SHOT / "06_local_tests_lint_coverage.png", 8.5,
+      "Figure 10 -flake8 (0 issues) and 28 passing tests with coverage.")
 para("GitHub Actions workflow (.github/workflows/ci.yml), triggered on push, "
      "pull request and manually:")
 table(["Job", "Steps", "Artefacts"], [
@@ -449,10 +444,10 @@ table(["Job", "Steps", "Artefacts"], [
 para("Jobs are chained with needs:, so any lint error, failing test, "
      "training crash, quality-gate miss or broken container stops the "
      "pipeline, and each failing step keeps its full log in the run.")
-image(SHOT / "07_github_actions_pipeline.png", 11.5,
-      "Figure 12 - GitHub Actions run #1: all four jobs green, 6 artefacts.")
+image(SHOT / "07_github_actions_pipeline.png", 10,
+      "Figure 11 - GitHub Actions run #1: all four jobs green, 6 artefacts.")
 image(SHOT / "07b_github_actions_docker_job.png", 14,
-      "Figure 13 - CI Docker job log: image build, container start, "
+      "Figure 12 - CI Docker job log: image build, container start, "
       "/health and /predict smoke test, structured container logs.")
 
 # ------------------------------------------------ 8 container + API
@@ -469,11 +464,11 @@ bullets([
 ])
 para("The image was built and run locally with Docker Desktop 29.9 "
      "(final image 258 MB) and is also built and smoke-tested in every CI "
-     "run (Figure 13).")
-image(SHOT / "14_docker_build.png", 10.5,
-      "Figure 14 - Local multi-stage docker build of heart-risk-api:1.0.0.")
-image(SHOT / "15_docker_run_predict.png", 15,
-      "Figure 15 - Container running (docker ps), /health and /predict "
+     "run (Figure 12).")
+image(SHOT / "14_docker_build.png", 8,
+      "Figure 13 - Local multi-stage docker build of heart-risk-api:1.0.0.")
+image(SHOT / "15_docker_run_predict.png", 13.5,
+      "Figure 14 - Container running (docker ps), /health and /predict "
       "answered from the container, JSON logs via docker logs.")
 
 # ------------------------------------------------ 9 deployment
@@ -509,11 +504,11 @@ para("Access instructions (local cluster, no public URL): the LoadBalancer "
      "the host returns 404, proving host-based routing. On Minikube the same "
      "script works with minikube tunnel. Under the load test the HPA scaled "
      "the API from 2 to 4 replicas, and Prometheus discovered every new pod.")
-image(SHOT / "16_k8s_resources.png", 14,
-      "Figure 16 - Node, Deployments, Pods, Services, Ingress and HPA "
+image(SHOT / "16_k8s_resources.png", 12,
+      "Figure 15 - Node, Deployments, Pods, Services, Ingress and HPA "
       "(scaled 2 -> 4 under load) in namespace heart-risk.")
-image(SHOT / "17_k8s_predict_loadbalancer.png", 15,
-      "Figure 17 - Predictions served through the LoadBalancer and the "
+image(SHOT / "17_k8s_predict_loadbalancer.png", 13,
+      "Figure 16 - Predictions served through the LoadBalancer and the "
       "NGINX Ingress, plus pod logs.")
 
 # ------------------------------------------------ 10 monitoring
@@ -535,13 +530,13 @@ bullets([
      "risk distribution) and a dependency-free /monitor page built into the "
      "API (screenshot in screenshots/11_api_monitor_dashboard.png)."),
 ])
-image(SHOT / "18_grafana_dashboard.png", 15,
-      "Figure 18 - Grafana dashboard in the cluster after ~3,200 predictions "
+image(SHOT / "18_grafana_dashboard.png", 14,
+      "Figure 17 - Grafana dashboard in the cluster after ~3,200 predictions "
       "through the LoadBalancer: 0 % 5xx, p95 latency ~50 ms, positive share "
       "46 % (matches training prevalence). The early latency spike is the "
       "load burst before the HPA added replicas.")
-image(SHOT / "19_prometheus_targets.png", 11,
-      "Figure 19 - Prometheus pod discovery: all 4 API replicas UP.")
+image(SHOT / "19_prometheus_targets.png", 10,
+      "Figure 18 - Prometheus pod discovery: all 4 API replicas UP.")
 
 # ------------------------------------------------ 11 conclusion
 doc.add_heading("11. Conclusion and future work", level=1)

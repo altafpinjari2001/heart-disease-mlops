@@ -1,6 +1,8 @@
 # Heart Disease Risk — End-to-End MLOps Pipeline
 
-MLOps (AIMLCZG523) Assignment 01. A classifier that predicts the presence of heart
+[![ci-cd](https://github.com/altafpinjari2001/heart-disease-mlops/actions/workflows/ci.yml/badge.svg)](https://github.com/altafpinjari2001/heart-disease-mlops/actions/workflows/ci.yml)
+
+MLOps (AIMLCZG523) Assignment 01 - Altaf Anwar Pinjari (2025AE05638). A classifier that predicts the presence of heart
 disease from 13 clinical attributes (UCI Heart Disease, Cleveland), served as a
 monitored, containerised FastAPI service on Kubernetes.
 

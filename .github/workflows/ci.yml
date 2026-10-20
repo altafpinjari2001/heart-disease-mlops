@@ -17,10 +17,10 @@ env:
 jobs:
   lint:
     name: Lint (flake8)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: pip
@@ -28,7 +28,7 @@ jobs:
       - run: pip install flake8==7.1.1
       - name: flake8
         run: flake8 --format='%(path)s:%(row)d:%(col)d %(code)s %(text)s' --tee --output-file=flake8-report.txt
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         if: always()
         with:
           name: flake8-report
@@ -37,10 +37,10 @@ jobs:
   test:
     name: Unit tests (pytest)
     needs: lint
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: pip
@@ -51,7 +51,7 @@ jobs:
           pytest -v --junitxml=junit.xml
           --cov=heart_risk --cov=api --cov-report=term-missing
           --cov-report=xml
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         if: always()
         with:
           name: test-reports
@@ -62,10 +62,10 @@ jobs:
   train:
     name: Train & track (MLflow)
     needs: test
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: pip
@@ -85,7 +85,7 @@ jobs:
           print(json.dumps(m, indent=2))
           sys.exit(0 if m["test_roc_auc"] >= 0.85 else "ROC-AUC below gate")
           EOF
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: trained-model
           path: |
@@ -93,7 +93,7 @@ jobs:
             reports/model_comparison.csv
             reports/figures/
             training.log
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: mlflow-runs
           path: ci-mlruns/
@@ -101,10 +101,10 @@ jobs:
   docker:
     name: Build & smoke-test container
     needs: train
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v5
         with:
           name: trained-model
           path: .
@@ -127,14 +127,14 @@ jobs:
         run: docker logs api | tee container.log
       - name: Save image
         run: docker save $IMAGE_NAME:1.0.0 | gzip > heart-risk-api.tar.gz
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         if: always()
         with:
           name: docker-smoke-test
           path: |
             predict-response.json
             container.log
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: docker-image
           path: heart-risk-api.tar.gz
